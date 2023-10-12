@@ -1,33 +1,46 @@
 <template>
-  <div id="code-editor" ref="codeEditorRef" style="min-height: 400px" />
+  <div
+    id="code-editor"
+    ref="codeEditorRef"
+    style="min-height: 200px; height: 100vh"
+  />
 </template>
 
 <script setup lang="ts">
 import * as monaco from "monaco-editor";
-import { defineProps, onMounted, ref, toRaw, withDefaults } from "vue";
+import { defineProps, onMounted, ref, toRaw, watch, withDefaults } from "vue";
 
 /**
  * 定义属性类型
  */
 interface Props {
   value: string;
+  language?: string;
   handleChange: (v: string) => void;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   value: () => "",
+  language: () => "java",
   handleChange: (v: string) => {
     console.log(v);
   },
 });
 const codeEditorRef = ref();
 const codeEditor = ref();
-const fillValue = () => {
-  if (!codeEditor.value) {
-    return;
+
+//监听语言切换生效
+watch(
+  () => props.language,
+  () => {
+    if (codeEditor.value) {
+      monaco.editor.setModelLanguage(
+        toRaw(codeEditor.value).getModel(),
+        props.language
+      );
+    }
   }
-  toRaw(codeEditor.value).setValue("新的值");
-};
+);
 
 onMounted(() => {
   if (!codeEditorRef.value) {
@@ -37,7 +50,7 @@ onMounted(() => {
   // Hover on each property to see its docs!
   codeEditor.value = monaco.editor.create(codeEditorRef.value, {
     value: props.value,
-    language: "javascript",
+    language: props.language,
     automaticLayout: true,
     minimap: {
       enabled: true,

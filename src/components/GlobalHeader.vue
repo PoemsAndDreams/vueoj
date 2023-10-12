@@ -33,7 +33,6 @@ import { routes } from "@/router/routes";
 import checkAccess from "@/access/checkAccess";
 import { computed, ref } from "vue";
 import { useStore } from "vuex";
-import ACCESS_ENUM from "@/access/accessEnum";
 
 const router = useRouter();
 const store = useStore();

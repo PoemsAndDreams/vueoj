@@ -1,6 +1,5 @@
 <template>
   <div id="addQuestionView">
-    <h2>创建题目</h2>
     <a-form :model="form" label-align="left">
       <a-form-item field="title" label="标题">
         <a-input v-model="form.title" placeholder="请输入标题" />
@@ -102,7 +101,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { onMounted, reactive, ref } from "vue";
+import { onMounted, ref } from "vue";
 import MdEditor from "@/components/MdEditor.vue";
 import { QuestionControllerService } from "../../../generated";
 import message from "@arco-design/web-vue/es/message";
@@ -113,7 +112,7 @@ const route = useRoute();
 const updatePage = route.path.includes("update");
 
 const form = ref({
-  tags: ["栈", "简单"],
+  tags: ["栈", "简单", "二叉树"],
   title: "A+B",
   answer: "暴力破解",
   content: "题目内容",
@@ -230,5 +229,7 @@ const onAnswerChange = (value: string) => {
 
 <style scoped>
 #addQuestionView {
+  max-width: 1280px;
+  margin: 0 auto;
 }
 </style>

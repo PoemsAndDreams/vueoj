@@ -1,15 +1,15 @@
 <template>
   <div id="manageQuestionView">
-    <h2>题目管理</h2>
     <a-table
       :columns="columns"
       :data="dataList"
       :pagination="{
         showTotal: true,
         pageSize: searchParams.pageSize,
-        current: searchParams.pageNum,
+        current: searchParams.current,
         total: total,
       }"
+      @page-change="onPageChange"
     >
       <template #optional="{ record }">
         <a-space>
@@ -21,7 +21,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
+import { onMounted, ref, watchEffect } from "vue";
 import { Question, QuestionControllerService } from "../../../generated";
 import message from "@arco-design/web-vue/es/message";
 import { useRouter } from "vue-router";
@@ -32,7 +32,7 @@ const dataList = ref([]);
 const total = ref(0);
 const searchParams = ref({
   pageSize: 10,
-  pageNum: 1,
+  current: 1,
 });
 
 const loadDate = async () => {
@@ -46,6 +46,13 @@ const loadDate = async () => {
     message.error("加载失败" + res.message);
   }
 };
+
+/**
+ * 监听searchParams改变，页面重新加载
+ */
+watchEffect(() => {
+  loadDate();
+});
 
 onMounted(() => {
   loadDate();
@@ -102,6 +109,13 @@ const columns = [
   },
 ];
 
+const onPageChange = (page: number) => {
+  searchParams.value = {
+    ...searchParams.value,
+    current: page,
+  };
+};
+
 const doDelete = async (question: Question) => {
   const res = await QuestionControllerService.deleteQuestionUsingPost({
     id: question.id,
@@ -125,5 +139,7 @@ const doUpdate = (question: Question) => {
 
 <style scoped>
 #manageQuestionView {
+  max-width: 1280px;
+  margin: 0 auto;
 }
 </style>
